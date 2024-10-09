@@ -1,43 +1,39 @@
-"use client";
-import localFont from "next/font/local";
-import "./globals.css";
-import { ClerkProvider, useAuth } from "@clerk/clerk-react";
-import { ConvexProviderWithClerk } from "convex/react-clerk";
-import {
-  Authenticated,
-  ConvexReactClient,
-  Unauthenticated,
-} from "convex/react";
-import { SignInButton, UserButton } from "@clerk/nextjs";
+'use client'
+import localFont from 'next/font/local'
+import './globals.css'
+import { ClerkProvider, useAuth } from '@clerk/clerk-react'
+import { SignInButton, UserButton } from '@clerk/nextjs'
+import { Authenticated, ConvexReactClient, Unauthenticated } from 'convex/react'
+import { ConvexProviderWithClerk } from 'convex/react-clerk'
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
+  src: './fonts/GeistVF.woff',
+  variable: '--font-geist-sans',
+  weight: '100 900'
+})
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+  src: './fonts/GeistMonoVF.woff',
+  variable: '--font-geist-mono',
+  weight: '100 900'
+})
 
 const convex = new ConvexReactClient(
   process.env.NEXT_PUBLIC_CONVEX_URL as string
-);
+)
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-100`}
       >
         <ClerkProvider
           publishableKey={
-            "pk_test_c2hpbmluZy1ncm91c2UtNDMuY2xlcmsuYWNjb3VudHMuZGV2JA"
+            'pk_test_c2hpbmluZy1ncm91c2UtNDMuY2xlcmsuYWNjb3VudHMuZGV2JA'
           }
         >
           <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
@@ -45,7 +41,7 @@ export default function RootLayout({
               <SignInButton />
             </Unauthenticated>
             <Authenticated>
-              <div className="my-8 container mx-auto p-4 max-sm:my-4">
+              <div className='my-8 container mx-auto p-4 max-sm:my-4'>
                 <UserButton />
               </div>
               {children}
@@ -54,5 +50,5 @@ export default function RootLayout({
         </ClerkProvider>
       </body>
     </html>
-  );
+  )
 }

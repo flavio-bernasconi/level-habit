@@ -1,25 +1,25 @@
-import { Id } from "../convex/_generated/dataModel";
+import type { Id } from '../convex/_generated/dataModel'
 
 export const levelsKeys = {
-  show: "show",
-  easy: "easy",
-  medium: "medium",
-  hard: "hard",
-} as const;
+  show: 'show',
+  easy: 'easy',
+  medium: 'medium',
+  hard: 'hard'
+} as const
 
 export type Habit = {
-  name: string;
-  id: string;
+  _id: Id<'habits'>
+  name: string
   levelsDescription: {
-    [key in keyof typeof levelsKeys]: string;
-  };
-};
+    [key in keyof typeof levelsKeys]: string
+  }
+}
 
 export type HabitByDate = {
-  activeLevel?: keyof typeof levelsKeys;
-  value: number;
-  date: string;
-  habitId: Id<"habits">;
-  _creationTime: number;
-  _id: Id<"habitsByDate">;
-};
+  activeLevel?: keyof typeof levelsKeys
+  value: number
+  date: string
+  habitId: Id<'habits'>
+  _creationTime: number
+  _id: Id<'habitsByDate'>
+}

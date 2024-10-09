@@ -1,15 +1,15 @@
-import { v } from "convex/values";
-import { QueryCtx, mutation, query } from "./_generated/server";
+import { v } from 'convex/values'
+import { type QueryCtx, mutation, query } from './_generated/server'
 
 export const store = mutation({
   args: {},
-  handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
+  handler: async ctx => {
+    const identity = await ctx.auth.getUserIdentity()
     if (!identity) {
-      throw new Error("Called storeUser without authentication present");
+      throw new Error('Called storeUser without authentication present')
     }
 
-    const user = await getUser(ctx, identity.tokenIdentifier!);
+    const user = await getUser(ctx, identity.tokenIdentifier!)
     if (user !== null) {
       if (
         user.name !== identity.name ||
@@ -22,34 +22,35 @@ export const store = mutation({
           name: identity.name,
           username: identity.nickname,
           pictureUrl: identity.pictureUrl,
-        });
+          email: identity.email
+        })
       }
-      return user._id;
+      return user._id
     }
     // If it's a new identity, create a new `User`.
-    return await ctx.db.insert("users", {
+    return await ctx.db.insert('users', {
       tokenIdentifier: identity.tokenIdentifier,
       name: identity.name!,
       username: identity.nickname!,
       pictureUrl: identity.pictureUrl!,
-    });
-  },
-});
+      email: identity.email!,
+      level: 1
+    })
+  }
+})
 
 export const get = query({
   args: {
-    username: v.string(),
+    username: v.string()
   },
   handler: async (ctx, args) => {
-    return await getUser(ctx, args.username);
-  },
-});
+    return await getUser(ctx, args.username)
+  }
+})
 
 export async function getUser(ctx: QueryCtx, tokenIdentifier: string) {
   return await ctx.db
-    .query("users")
-    .withIndex("tokenIdentifier", (q) =>
-      q.eq("tokenIdentifier", tokenIdentifier)
-    )
-    .unique();
+    .query('users')
+    .withIndex('tokenIdentifier', q => q.eq('tokenIdentifier', tokenIdentifier))
+    .unique()
 }

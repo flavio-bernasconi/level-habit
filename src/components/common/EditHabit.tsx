@@ -1,6 +1,6 @@
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import type React from 'react'
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 
 import {
   Dialog,
@@ -12,14 +12,20 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
 import { useMutation, useQuery } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
+import type { Habit } from '../../../types'
 
-export const CreateNewHabit = () => {
+export const EditHabit = ({
+  habit,
+  trigger
+}: {
+  habit: Habit
+  trigger: ReactNode
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const levels = useQuery(api.levels.get)
-  const mutation = useMutation(api.habits.createNewHabit)
+  const mutation = useMutation(api.habits.editHabit)
 
   function createHabit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -34,7 +40,8 @@ export const CreateNewHabit = () => {
           easy: formData.get('easy') as string,
           medium: formData.get('medium') as string,
           hard: formData.get('hard') as string
-        }
+        },
+        id: habit._id
       })
       setIsOpen(false)
     } catch (error) {
@@ -45,23 +52,23 @@ export const CreateNewHabit = () => {
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger
-          className={cn(
-            buttonVariants()
-            // "fixed bottom-5 transform left-1/2 -translate-x-1/2"
-          )}
-        >
-          Create new habit
+        <DialogTrigger className='w-full text-left'>
+          {trigger ?? 'edit'}
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create new habit</DialogTitle>
+            <DialogTitle>Edit habit</DialogTitle>
             <DialogDescription className='sr-only'></DialogDescription>
             <form onSubmit={createHabit}>
               <div className='flex flex-col gap-4 mb-4'>
                 <div>
                   <Label htmlFor='name'>Name</Label>
-                  <Input required id='name' name='name' />
+                  <Input
+                    required
+                    id='name'
+                    name='name'
+                    defaultValue={habit.name}
+                  />
                 </div>
                 <hr className='my-3' />
                 <p className='text-sm '>Levels settings:</p>
@@ -80,6 +87,7 @@ export const CreateNewHabit = () => {
                       required
                       id={level._id}
                       name={level.id}
+                      defaultValue={habit.levelsDescription[level.id]}
                       placeholder='Describe action for this level'
                     />
                   </div>
