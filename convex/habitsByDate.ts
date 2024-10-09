@@ -28,6 +28,32 @@ export const get = query({
   }
 })
 
+export const getRangeDates = query({
+  args: { habitId: v.id('habits'), startDate: v.string(), endDate: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error('Called storeUser without authentication present')
+    }
+    const user = await getUser(ctx, identity.tokenIdentifier!)
+    if (!user) {
+      throw new Error('User not found')
+    }
+
+    return await ctx.db
+      .query('habitsByDate')
+      .filter(q => {
+        return q.and(
+          q.gte(q.field('date'), args.startDate),
+          q.lte(q.field('date'), args.endDate),
+          q.eq(q.field('authorId'), user._id),
+          q.eq(q.field('habitId'), args.habitId)
+        )
+      })
+      .collect()
+  }
+})
+
 export const getTodayCounter = query({
   args: { date: v.string() },
   handler: async (ctx, args) => {

@@ -9,7 +9,7 @@
       "**/Dockerfile*",
       ".vscode/*",
       "proxy/*",
-      "convex"
+      "convex/_generated"
     ]
   },
   "formatter": {

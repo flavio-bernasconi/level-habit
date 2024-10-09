@@ -41,7 +41,7 @@ export default function RootLayout({
               <SignInButton />
             </Unauthenticated>
             <Authenticated>
-              <div className='my-8 container mx-auto p-4 max-sm:my-4'>
+              <div className='container mx-auto p-4 max-sm:my-4'>
                 <UserButton />
               </div>
               {children}
